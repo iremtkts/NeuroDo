@@ -37,6 +37,26 @@ final class LoginViewController: UIViewController {
         return indicator
     }()
     
+    private let goToSignUpButton: UIButton = {
+        let button = UIButton(type: .system)
+        let attributedTitle = NSMutableAttributedString(
+            string: "Hesabınız yok mu? ",
+            attributes: [
+                .foregroundColor: UIColor.label,
+                .font: UIFont.systemFont(ofSize: 14)
+            ]
+        )
+        attributedTitle.append(NSAttributedString(
+            string: "Kayıt Ol",
+            attributes: [
+                .foregroundColor: UIColor.systemBlue,
+                .font: UIFont.boldSystemFont(ofSize: 14)
+            ]
+        ))
+        button.setAttributedTitle(attributedTitle, for: .normal)
+        return button
+    }()
+    
     // MARK: - ViewModel
     private let viewModel = LoginViewModel()
     
@@ -54,8 +74,13 @@ final class LoginViewController: UIViewController {
         title = "NeuroDo - Giriş"
         view.backgroundColor = .systemBackground
         
-        
-        let stackView = UIStackView(arrangedSubviews: [emailTextField, passwordTextField, loginButton, loadingIndicator])
+        let stackView = UIStackView(arrangedSubviews: [
+            emailTextField,
+            passwordTextField,
+            loginButton,
+            loadingIndicator,
+            goToSignUpButton
+        ])
         stackView.axis = .vertical
         stackView.spacing = 16
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -69,10 +94,10 @@ final class LoginViewController: UIViewController {
         ])
         
         loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
+        goToSignUpButton.addTarget(self, action: #selector(goToSignUpTapped), for: .touchUpInside)
     }
     
     private func setupBindings() {
-
         viewModel.onLoadingStateChange = { [weak self] isLoading in
             if isLoading {
                 self?.loadingIndicator.startAnimating()
@@ -83,12 +108,10 @@ final class LoginViewController: UIViewController {
             }
         }
         
-      
         viewModel.onError = { [weak self] errorMessage in
             self?.showAlert(title: "Hata", message: errorMessage)
         }
         
-   
         viewModel.onLoginSuccess = { [weak self] in
             self?.showAlert(title: "Başarılı", message: "Giriş başarılı!") {
                 // TODO: Ana ekrana yönlendirme yapılacak
@@ -99,9 +122,16 @@ final class LoginViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func loginButtonTapped() {
-        viewModel.email = emailTextField.text ?? ""
+        /*viewModel.email = emailTextField.text ?? ""
         viewModel.password = passwordTextField.text ?? ""
-        viewModel.login()
+        viewModel.login()*/
+        let tabBar = MainTabBarController()
+            navigationController?.setViewControllers([tabBar], animated: true)
+    }
+    
+    @objc private func goToSignUpTapped() {
+        let signUpVC = SignUpViewController()
+        navigationController?.pushViewController(signUpVC, animated: true)
     }
     
     // MARK: - Helper
