@@ -11,3 +11,5 @@ __pycache__/
 
 # DB file (local dev only)
 *.db
+
+.env

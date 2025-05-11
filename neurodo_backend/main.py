@@ -1,16 +1,11 @@
 from fastapi import FastAPI
-from database import Base, engine
-from auth import router as auth_router
-from models import User
+from src.core.config import settings
+from src.api.v1.router import api_router
 
-app = FastAPI()
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    version=settings.VERSION,
+    openapi_url=f"{settings.API_V1_STR}/openapi.json"
+)
 
-# Tabloları yarat
-Base.metadata.create_all(bind=engine)
-
-# Router’ları bağla
-app.include_router(auth_router, prefix="/auth")
-
-@app.get("/")
-async def root():
-    return {"message": "NeuroDo API çalışıyor 🚀"}
+app.include_router(api_router, prefix=settings.API_V1_STR)
