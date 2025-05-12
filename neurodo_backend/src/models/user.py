@@ -10,3 +10,4 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     
     todos = relationship("Todo", back_populates="user")
+    ai_suggestions = relationship("AISuggestion", back_populates="user")
