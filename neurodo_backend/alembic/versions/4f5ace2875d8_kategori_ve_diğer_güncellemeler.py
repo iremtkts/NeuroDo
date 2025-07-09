@@ -1,8 +1,8 @@
-"""add ai suggestions table
+"""Kategori ve diğer güncellemeler
 
-Revision ID: d7c8b4da609b
-Revises: 1e33ac451448
-Create Date: 2025-05-12 21:47:06.213527
+Revision ID: 4f5ace2875d8
+Revises: 0e3172f66cbc
+Create Date: 2025-07-09 18:54:34.646002
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'd7c8b4da609b'
-down_revision: Union[str, None] = '1e33ac451448'
+revision: str = '4f5ace2875d8'
+down_revision: Union[str, None] = '0e3172f66cbc'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

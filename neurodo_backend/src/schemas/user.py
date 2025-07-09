@@ -8,6 +8,8 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     id: int
+    is_verified: int
+    verification_code: str | None = None
 
     class Config:
         from_attributes = True

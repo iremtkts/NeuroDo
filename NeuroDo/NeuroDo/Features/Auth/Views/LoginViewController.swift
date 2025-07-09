@@ -71,31 +71,56 @@ final class LoginViewController: UIViewController {
     // MARK: - Setup Methods
     
     private func setupUI() {
-        title = "NeuroDo - Giriş"
+        title = "NeuroDo"
         view.backgroundColor = .systemBackground
-        
-        let stackView = UIStackView(arrangedSubviews: [
+
+        // 1. Görsel (login.png)
+        let imageView = UIImageView(image: UIImage(named: "9"))
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.heightAnchor.constraint(equalToConstant: 200).isActive = true
+
+        // 2. Slogan Label
+        let sloganLabel = UILabel()
+        sloganLabel.text = "Üretken olmaya giriş yap"
+        sloganLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
+        sloganLabel.textAlignment = .center
+        sloganLabel.textColor = .secondaryLabel
+
+        // 3. Stack View (Form alanları)
+        let formStack = UIStackView(arrangedSubviews: [
             emailTextField,
             passwordTextField,
             loginButton,
             loadingIndicator,
             goToSignUpButton
         ])
-        stackView.axis = .vertical
-        stackView.spacing = 16
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(stackView)
-        
-        NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
-            stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        formStack.axis = .vertical
+        formStack.spacing = 16
+
+        // 4. Ana Stack
+        let mainStack = UIStackView(arrangedSubviews: [
+            imageView,
+            sloganLabel,
+            formStack
         ])
-        
+        mainStack.axis = .vertical
+        mainStack.spacing = 24
+        mainStack.translatesAutoresizingMaskIntoConstraints = false
+
+        view.addSubview(mainStack)
+
+        NSLayoutConstraint.activate([
+            mainStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            mainStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            mainStack.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+
+        // 5. Buton aksiyonları
         loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
         goToSignUpButton.addTarget(self, action: #selector(goToSignUpTapped), for: .touchUpInside)
     }
+
     
     private func setupBindings() {
         viewModel.onLoadingStateChange = { [weak self] isLoading in
@@ -114,7 +139,8 @@ final class LoginViewController: UIViewController {
         
         viewModel.onLoginSuccess = { [weak self] in
             self?.showAlert(title: "Başarılı", message: "Giriş başarılı!") {
-                // TODO: Ana ekrana yönlendirme yapılacak
+                let tabBar = MainTabBarController()
+                self?.navigationController?.setViewControllers([tabBar], animated: true)
             }
         }
     }
@@ -122,11 +148,9 @@ final class LoginViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func loginButtonTapped() {
-        /*viewModel.email = emailTextField.text ?? ""
+        viewModel.email = emailTextField.text ?? ""
         viewModel.password = passwordTextField.text ?? ""
-        viewModel.login()*/
-        let tabBar = MainTabBarController()
-            navigationController?.setViewControllers([tabBar], animated: true)
+        viewModel.login()
     }
     
     @objc private func goToSignUpTapped() {

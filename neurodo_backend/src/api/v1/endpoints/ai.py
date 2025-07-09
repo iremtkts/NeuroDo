@@ -1,52 +1,42 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from fastapi.responses import JSONResponse
 from src.core.database import get_db
-from src.services import ai as ai_service
+from src.services.ai import chat_with_planner, create_todo_from_ai
 from src.core.security import get_current_user
-from src.schemas.ai_suggestion import AIMode, AISuggestionSelect
-from src.schemas.todo import Todo
+from src.schemas.ai import AIChatRequest
 
 router = APIRouter()
 
-@router.post("/suggest")
-def get_suggestions(
-    mode: AIMode,
+@router.post("/chat")
+def chat_with_ai(
+    request: AIChatRequest,
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
     try:
-        suggestions = ai_service.get_ai_suggestions(
-            mode=mode.mode,
-            db=db,
-            user_id=current_user.id
-        )
-        return {"suggestions": suggestions}
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"AI servisi şu anda kullanılamıyor: {str(e)}"
-        )
+        user_message = request.message
+        ai_response = chat_with_planner(user_message)
+        todos = create_todo_from_ai(db, current_user.id, ai_response)
 
-@router.post("/select", response_model=Todo)
-def select_suggestion(
-    suggestion: AISuggestionSelect,
-    db: Session = Depends(get_db),
-    current_user = Depends(get_current_user)
-):
-    """
-    Seçilen AI önerisini kullanıcının todo listesine ekler
-    """
-    try:
-        todo = ai_service.add_suggestion_to_todos(
-            suggestion_id=suggestion.suggestion_id,
-            db=db,
-            user_id=current_user.id
-        )
-        return todo
-    except HTTPException as e:
-        raise e
+        if not todos:
+            raise HTTPException(status_code=400, detail="AI yanıtı uygun formatta değil.")
+
+        response_tasks = [
+            {
+                "id": todo.id,
+                "title": todo.title,
+                "description": todo.description,
+                "status": todo.status.value,  # Enum'u string olarak döndür
+                "category_id": todo.category_id,
+                "due_date": str(todo.due_date),
+                "due_time": str(todo.due_time)
+            }
+            for todo in todos
+        ]
+
+        return JSONResponse(content={"response": response_tasks})
+
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Öneri todo listesine eklenirken bir hata oluştu: {str(e)}"
-        )
+        print("Hata:", e)
+        raise HTTPException(status_code=500, detail="AI yanıtı alınırken veya görev oluşturulurken hata oluştu.")

@@ -1,5 +1,7 @@
 import Foundation
 
 struct SignUpResponse: Codable {
-    let message: String
+    let id: Int
+    let email: String
 }
+

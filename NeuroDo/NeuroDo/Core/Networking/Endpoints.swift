@@ -5,6 +5,7 @@ enum HTTPMethod: String {
     case POST
     case PUT
     case DELETE
+    case PATCH
 }
 
 struct Endpoint {
@@ -14,7 +15,7 @@ struct Endpoint {
     var body: Data? = nil
     
     var url: String {
-        return "http://YOUR_API_BASE_URL" + path
+        return "http://127.0.0.1:8000" + path
     }
 }
 

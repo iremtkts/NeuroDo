@@ -15,9 +15,10 @@ final class AIAssistantViewModel {
     
     private let analyzer: MoodAnalyzerProtocol
     
-    init(analyzer: MoodAnalyzerProtocol = MockMoodAnalyzer()) {
+    init(analyzer: MoodAnalyzerProtocol = MoodAnalyzer()) {
         self.analyzer = analyzer
     }
+
     
     func analyze() {
         guard !moodInput.trimmingCharacters(in: .whitespaces).isEmpty else {

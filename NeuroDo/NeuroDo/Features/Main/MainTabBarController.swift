@@ -27,6 +27,7 @@ final class MainTabBarController: UITabBarController {
         addTaskNav.tabBarItem = UITabBarItem(title: "Ekle", image: UIImage(systemName: "plus.circle"), tag: 2)
         
         // Sekmeleri ekle
-        viewControllers = [taskNav, aiNav, addTaskNav]
+        viewControllers = [taskNav, addTaskNav, aiNav]
+
     }
 }

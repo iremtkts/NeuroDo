@@ -7,7 +7,12 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite:///./neurodo.db"
     SECRET_KEY: str = "your-secret-key"  # Güvenli bir secret key kullanın
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    OPENAI_API_KEY: str = ""  # OpenAI API anahtarınızı buraya ekleyin
+    OPENAI_API_KEY: str = ""
+    EMAIL_HOST: str = "smtp.gmail.com"
+    EMAIL_PORT: int = 587
+    EMAIL_HOST_USER: str = "storyjourney23@gmail.com"
+    EMAIL_HOST_PASSWORD: str = "ysodxgcikwgrnvuw"
+    EMAIL_USE_TLS: bool = True
 
     class Config:
         case_sensitive = True

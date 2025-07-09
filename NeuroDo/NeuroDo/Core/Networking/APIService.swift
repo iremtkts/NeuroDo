@@ -20,6 +20,12 @@ class APIService {
         request.allHTTPHeaderFields = endpoint.headers
         request.httpBody = endpoint.body
         
+
+        if let authHeader = TokenManager.shared.getAuthorizationHeader() {
+            request.setValue(authHeader, forHTTPHeaderField: "Authorization")
+        }
+
+        
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 DispatchQueue.main.async {
@@ -34,6 +40,8 @@ class APIService {
                 }
                 return
             }
+            
+            print("🟢 Backend response:", String(data: data, encoding: .utf8) ?? "Veri okunamadı")
             
             do {
                 let decodedData = try JSONDecoder().decode(T.self, from: data)
