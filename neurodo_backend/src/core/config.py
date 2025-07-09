@@ -13,7 +13,6 @@ class Settings(BaseSettings):
     EMAIL_HOST_USER: str = "storyjourney23@gmail.com"
     EMAIL_HOST_PASSWORD: str = "ysodxgcikwgrnvuw"
     EMAIL_USE_TLS: bool = True
-
     class Config:
         case_sensitive = True
         env_file = ".env"
