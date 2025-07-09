@@ -4,6 +4,13 @@ from fastapi import FastAPI
 from src.core.config import settings
 from src.api.v1.router import api_router
 
+
+from src.core.database import Base, engine
+
+
+Base.metadata.create_all(bind=engine)
+
+
 print("✅ Imports successful")
 
 app = FastAPI(
