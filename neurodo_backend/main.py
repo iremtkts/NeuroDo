@@ -1,6 +1,10 @@
+print("✅ Starting FastAPI App")
+
 from fastapi import FastAPI
 from src.core.config import settings
 from src.api.v1.router import api_router
+
+print("✅ Imports successful")
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -10,5 +14,6 @@ app = FastAPI(
     openapi_url="/openapi.json"
 )
 
-
 app.include_router(api_router, prefix=settings.API_V1_STR)
+
+print("✅ FastAPI app created")
