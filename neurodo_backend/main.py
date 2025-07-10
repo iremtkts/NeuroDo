@@ -8,7 +8,7 @@ from src.api.v1.router import api_router
 from src.core.database import Base, engine
 
 
-Base.metadata.create_all(bind=engine)
+# Base.metadata.create_all(bind=engine)
 
 
 print("✅ Imports successful")
