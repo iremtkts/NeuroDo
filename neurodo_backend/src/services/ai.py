@@ -15,10 +15,8 @@ def chat_with_planner(user_message: str) -> str:
     today_str = datetime.now().strftime("%Y-%m-%d")
     system_prompt = f"""
 Sen bir günlük planlama asistanısın. Bugünün tarihi: {today_str}.
-Kullanıcıdan gelen görevleri aşağıdaki JSON formatında döndür:
-
+Kullanıcıdan gelen görevlerde geçen tarihsel ifadeleri (ör: bugün, yarın, gelecek hafta, 3 gün sonra) gerçek takvim tarihine çevirerek JSON'da due_date alanına yaz.
 Her görev için due_time alanını, görevin anlamına uygun ve mantıklı bir saat olarak ata.
-Örneğin, sabah yapılacak işler için 08:00-10:00 arası, akşam için 18:00-21:00 arası gibi.
 
 [
   {{
