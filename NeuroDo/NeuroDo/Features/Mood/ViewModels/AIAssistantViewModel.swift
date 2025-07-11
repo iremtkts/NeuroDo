@@ -1,33 +1,38 @@
 import Foundation
 
 final class AIAssistantViewModel {
-    
-    var moodInput: String = ""
-    
-    var moodResult: MoodAnalysisResponse? {
-        didSet {
-            onResultUpdated?()
-        }
-    }
-    
-    var onResultUpdated: (() -> Void)?
+    var onLoadingStateChange: ((Bool) -> Void)?
+    var onSuccess: (() -> Void)?
     var onError: ((String) -> Void)?
-    
-    private let analyzer: MoodAnalyzerProtocol
-    
-    init(analyzer: MoodAnalyzerProtocol = MoodAnalyzer()) {
-        self.analyzer = analyzer
+
+    private var isLoading: Bool = false {
+        didSet {
+            onLoadingStateChange?(isLoading)
+        }
     }
 
-    
-    func analyze() {
-        guard !moodInput.trimmingCharacters(in: .whitespaces).isEmpty else {
-            onError?("Lütfen ruh halinizi girin.")
+    private let chatService: AIChatServiceProtocol
+
+    init(chatService: AIChatServiceProtocol = AIChatService.shared) {
+        self.chatService = chatService
+    }
+
+    func sendMessage(message: String) {
+        guard !message.trimmingCharacters(in: .whitespaces).isEmpty else {
+            onError?("Lütfen bir mesaj girin.")
             return
         }
-        
-        analyzer.analyzeMood(from: moodInput) { [weak self] result in
-            self?.moodResult = result
+
+        isLoading = true
+        chatService.sendChatMessage(message) { [weak self] success in
+            DispatchQueue.main.async {
+                self?.isLoading = false
+                if success {
+                    self?.onSuccess?()
+                } else {
+                    self?.onError?("Görevler oluşturulamadı. Lütfen tekrar deneyin.")
+                }
+            }
         }
     }
 }

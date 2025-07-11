@@ -15,7 +15,7 @@ struct Endpoint {
     var body: Data? = nil
     
     var url: String {
-        return "http://127.0.0.1:8000" + path
+        return "https://neurodo-production.up.railway.app" + path
     }
 }
 

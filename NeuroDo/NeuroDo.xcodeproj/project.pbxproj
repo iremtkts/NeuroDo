@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		0D5D91DC2E2101290076D7CF /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 0D5D91DB2E2101290076D7CF /* FSCalendar */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		0DE3DAD32DA328A500A2E61F /* NeuroDo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NeuroDo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0D5D91DC2E2101290076D7CF /* FSCalendar in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 			);
 			name = NeuroDo;
 			packageProductDependencies = (
+				0D5D91DB2E2101290076D7CF /* FSCalendar */,
 			);
 			productName = NeuroDo;
 			productReference = 0DE3DAD32DA328A500A2E61F /* NeuroDo.app */;
@@ -108,6 +114,7 @@
 			mainGroup = 0DE3DACA2DA328A500A2E61F;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				0D5D91DA2E2101290076D7CF /* XCRemoteSwiftPackageReference "FSCalendar" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0DE3DAD42DA328A500A2E61F /* Products */;
@@ -337,6 +344,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		0D5D91DA2E2101290076D7CF /* XCRemoteSwiftPackageReference "FSCalendar" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/WenchaoD/FSCalendar";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.8.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0D5D91DB2E2101290076D7CF /* FSCalendar */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0D5D91DA2E2101290076D7CF /* XCRemoteSwiftPackageReference "FSCalendar" */;
+			productName = FSCalendar;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0DE3DACB2DA328A500A2E61F /* Project object */;
 }

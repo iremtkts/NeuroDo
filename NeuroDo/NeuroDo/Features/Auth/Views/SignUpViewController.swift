@@ -115,13 +115,69 @@ final class SignUpViewController: UIViewController {
         }
     }
 
+    private func isValidEmail(_ email: String) -> Bool {
+        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
+        return emailPredicate.evaluate(with: email)
+    }
+    private func showVerificationPopup() {
+        let alert = UIAlertController(title: "E-posta Doğrulama", message: "E-postanıza gelen kodu giriniz", preferredStyle: .alert)
+
+        alert.addTextField { textField in
+            textField.placeholder = "Doğrulama Kodu"
+            textField.keyboardType = .numberPad
+        }
+
+        alert.addAction(UIAlertAction(title: "İptal", style: .cancel, handler: nil))
+
+        let confirmAction = UIAlertAction(title: "Doğrula", style: .default) { [weak self] _ in
+            guard let code = alert.textFields?.first?.text, !code.isEmpty else {
+                self?.showAlert(title: "Hata", message: "Kod boş olamaz.")
+                return
+            }
+
+            self?.viewModel.verifyEmail(code: code) { success in
+                if success {
+                    self?.showAlert(title: "Başarılı", message: "Email doğrulandı. Giriş yapabilirsiniz.") {
+                        self?.navigationController?.popViewController(animated: true)
+                    }
+                } else {
+                    self?.showAlert(title: "Hata", message: "Kod doğrulanamadı. Lütfen tekrar deneyin.")
+                    self?.showVerificationPopup()
+                }
+            }
+        }
+
+        alert.addAction(confirmAction)
+        present(alert, animated: true, completion: nil)
+    }
+
+
     // MARK: - Actions
 
     @objc private func signUpButtonTapped() {
-        viewModel.email = emailTextField.text ?? ""
-        viewModel.password = passwordTextField.text ?? ""
+        guard let email = emailTextField.text, isValidEmail(email) else {
+            showAlert(title: "Geçersiz Email", message: "Lütfen geçerli bir email adresi girin.")
+            return
+        }
+
+        guard let password = passwordTextField.text, !password.isEmpty else {
+            showAlert(title: "Eksik Bilgi", message: "Şifre boş olamaz.")
+            return
+        }
+
+        viewModel.email = email
+        viewModel.password = password
+
         viewModel.signUp()
+
+        
+        viewModel.onSignUpSuccess = { [weak self] in
+            self?.showVerificationPopup()
+        }
     }
+
+
 
     // MARK: - Helper
 

@@ -10,7 +10,8 @@ import Foundation
 protocol TaskServiceProtocol {
     func fetchTasks(completion: @escaping ([TaskModel]) -> Void)
     func fetchOverdueTasks(completion: @escaping ([TaskModel]) -> Void)
-    func markTaskAsCompleted(taskId: Int, completion: @escaping (Bool) -> Void)
+    
+    func markTaskAsCompleted(task: TaskModel, completion: @escaping (Bool) -> Void)
     func deleteTask(taskId: Int, completion: @escaping (Bool) -> Void)
 }
 
@@ -62,11 +63,19 @@ final class TaskService: TaskServiceProtocol {
         }
     }
     
-    func markTaskAsCompleted(taskId: Int, completion: @escaping (Bool) -> Void) {
-        let path = "/todos/\(taskId)"
-        let method: HTTPMethod = .PATCH
+    func markTaskAsCompleted(task: TaskModel, completion: @escaping (Bool) -> Void) {
+        let path = "/api/v1/todos/\(task.id)"
+        let method: HTTPMethod = .PUT
 
-        let bodyDict: [String: String] = ["status": "completed"]
+        let bodyDict: [String: Any] = [
+            "title": task.title,
+            "description": task.description,
+            "status": "completed",
+            "category_id": task.category.id,
+            "due_date": task.dueDate,
+            "due_time": task.dueTime
+        ]
+
         guard let bodyData = try? JSONSerialization.data(withJSONObject: bodyDict) else {
             completion(false)
             return
@@ -79,11 +88,12 @@ final class TaskService: TaskServiceProtocol {
             case .success:
                 completion(true)
             case .failure(let error):
-                print("Görev tamamlama hatası: \(error)")
+                print("Görev tamamlanamadı: \(error)")
                 completion(false)
             }
         }
     }
+
 
 
 }

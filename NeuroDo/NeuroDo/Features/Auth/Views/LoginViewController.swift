@@ -145,13 +145,30 @@ final class LoginViewController: UIViewController {
         }
     }
     
+    private func isValidEmail(_ email: String) -> Bool {
+        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
+        return emailPredicate.evaluate(with: email)
+    }
+
     // MARK: - Actions
     
     @objc private func loginButtonTapped() {
-        viewModel.email = emailTextField.text ?? ""
-        viewModel.password = passwordTextField.text ?? ""
+        guard let email = emailTextField.text, isValidEmail(email) else {
+            showAlert(title: "Geçersiz Email", message: "Lütfen geçerli bir email adresi girin.")
+            return
+        }
+
+        guard let password = passwordTextField.text, !password.isEmpty else {
+            showAlert(title: "Eksik Bilgi", message: "Şifre boş olamaz.")
+            return
+        }
+
+        viewModel.email = email
+        viewModel.password = password
         viewModel.login()
     }
+
     
     @objc private func goToSignUpTapped() {
         let signUpVC = SignUpViewController()

@@ -39,18 +39,20 @@ final class TaskListViewModel {
     // MARK: - Görevleri ve Kategorileri Getir
 
     func fetchTasks() {
-      
-        categoryService.fetchCategories { [weak self] fetchedCategories in
-            self?.categories = fetchedCategories
+        taskService.fetchTasks { [weak self] fetchedTasks in
+            DispatchQueue.main.async {
+                let activeTasks = fetchedTasks
+                    .filter { $0.status.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() != "COMPLETED" }
 
-           
-            self?.taskService.fetchTasks { [weak self] fetchedTasks in
-                DispatchQueue.main.async {
-                    self?.tasks = fetchedTasks
-                }
+                let uniqueTasks = Array(
+                    Dictionary(grouping: activeTasks, by: { $0.id }).values.compactMap { $0.first }
+                )
+
+                self?.tasks = uniqueTasks
             }
         }
     }
+
 
     func refresh() {
         fetchTasks()
@@ -62,7 +64,7 @@ final class TaskListViewModel {
         taskService.fetchOverdueTasks { [weak self] overdue in
             DispatchQueue.main.async {
                 let msg = overdue.isEmpty
-                    ? "Bu hafta tamamlaman gereken görevleri yaptın! 🎉"
+                    ? "Küçük görevleri tamamlamak, beyne dopamin salgılatır ve bu da ‘başardım’ hissiyle birlikte üretkenliği tetikler. 🎉"
                     : "Hadi! \(overdue.count) görevin gecikti, birlikte toparlayabiliriz 💪"
                 self?.onStatusMessageUpdate?(msg)
             }
@@ -99,14 +101,19 @@ final class TaskListViewModel {
     }
 
     func markTaskAsCompleted(at indexPath: IndexPath) {
-        let task = groupedTasks[indexPath.section].tasks[indexPath.row]
-        taskService.markTaskAsCompleted(taskId: task.id) { [weak self] success in
-            guard success else { return }
-            DispatchQueue.main.async {
-                self?.fetchTasks() 
+        var task = groupedTasks[indexPath.section].tasks[indexPath.row]
+        task.status = "completed"
+
+        TaskService.shared.markTaskAsCompleted(task: task) { [weak self] success in
+            if success {
+                DispatchQueue.main.async {
+                    self?.refresh()
+                }
             }
         }
     }
+
+
 
 
     // MARK: - Yardımcı Fonksiyonlar (TableView için)

@@ -49,4 +49,33 @@ final class SignUpViewModel: BaseViewModel {
             }
         }
     }
+    
+    func verifyEmail(code: String, completion: @escaping (Bool) -> Void) {
+        guard let emailEncoded = email.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+              let codeEncoded = code.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+            completion(false)
+            return
+        }
+
+        let urlString = "https://neurodo-production.up.railway.app/api/v1/auth/verify?email=\(emailEncoded)&code=\(codeEncoded)"
+
+        guard let url = URL(string: urlString) else {
+            completion(false)
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            DispatchQueue.main.async {
+                if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                    completion(true)
+                } else {
+                    completion(false)
+                }
+            }
+        }.resume()
+    }
+
 }
