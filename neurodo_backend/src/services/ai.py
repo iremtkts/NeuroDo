@@ -11,36 +11,40 @@ import json
 
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
-SYSTEM_PROMPT = """
-Sen bir günlük planlama asistanısın. Kullanıcıdan gelen görevleri aşağıdaki JSON formatında döndür:
+def chat_with_planner(user_message: str) -> str:
+    today_str = datetime.now().strftime("%Y-%m-%d")
+    system_prompt = f"""
+Sen bir günlük planlama asistanısın. Bugünün tarihi: {today_str}.
+Kullanıcıdan gelen görevleri aşağıdaki JSON formatında döndür:
+
+Her görev için due_time alanını, görevin anlamına uygun ve mantıklı bir saat olarak ata.
+Örneğin, sabah yapılacak işler için 08:00-10:00 arası, akşam için 18:00-21:00 arası gibi.
 
 [
-  {
+  {{
     "title": "Koşuya Çıkma",
     "description": "Güne enerjik başlamak için koşuya çık.",
     "status": "active",
     "category_id": 1,
-    "due_date": "2025-07-09",
+    "due_date": "{today_str}",
     "due_time": "07:00"
-  },
-  {
+  }},
+  {{
     "title": "Yemek Hazırlama",
     "description": "Akşam yemeği için sağlıklı bir öğün hazırla.",
     "status": "active",
     "category_id": 2,
-    "due_date": "2025-07-09",
+    "due_date": "{today_str}",
     "due_time": "19:00"
-  }
+  }}
 ]
 
 Sadece geçerli bir JSON döndür. Açıklama veya başka bir metin ekleme.
 """
-
-def chat_with_planner(user_message: str) -> str:
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message}
         ]
     )
