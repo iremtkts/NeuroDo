@@ -153,6 +153,8 @@ def parse_ai_todo_response(ai_response: str):
         "minute": minute
     }
 
+EXAMPLE_TITLES = {"Koşuya Çıkma", "Yemek Hazırlama"}  # prompttaki örnek başlıklar
+
 def create_todo_from_ai(db: Session, user_id: int, ai_response: str):
     import json
     from datetime import datetime
@@ -161,6 +163,9 @@ def create_todo_from_ai(db: Session, user_id: int, ai_response: str):
         todos = json.loads(ai_response)
         created_todos = []
         for todo_data in todos:
+            # Eğer başlık örneklerden biriyse, AI yanlış yanıt döndürmüştür
+            if todo_data["title"] in EXAMPLE_TITLES:
+                raise HTTPException(status_code=400, detail="AI anlamlı bir görev üretemedi.")
             # Tarih ve saat dönüşümü
             due_date = None
             due_time = None
